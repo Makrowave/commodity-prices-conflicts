@@ -1,4 +1,5 @@
 export type Conflict = {
+  id: number,
   name: string,
   start: Date
   end: Date | null

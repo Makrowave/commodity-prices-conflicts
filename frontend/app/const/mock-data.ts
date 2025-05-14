@@ -1,17 +1,8 @@
-export type Conflict = {
-  name: string,
-  start: Date,
-  end: Date | null,
-  events: Event[]
-}
+import type {Conflict} from "~/const/dto";
 
-export type Event = {
-  name: string,
-  date: Date
-}
-
-const conflicts: Conflict[] = [
+export const conflicts: Conflict[] = [
   {
+    id: 1,
     name: "War on Terror",
     start: new Date('2001-09-11'),
     end: null,
@@ -31,6 +22,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 2,
     name: "Syrian Civil War",
     start: new Date('2011-03-15'),
     end: null,
@@ -54,6 +46,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 3,
     name: "Yemeni Civil War",
     start: new Date('2014-09-21'),
     end: null,
@@ -73,6 +66,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 4,
     name: "Russian Invasion of Ukraine",
     start: new Date('2022-02-24'),
     end: null,
@@ -92,6 +86,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 5,
     name: "Tigray War",
     start: new Date('2020-11-04'),
     end: new Date('2022-11-02'),
@@ -111,6 +106,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 6,
     name: "First Russo-Ukrainian War",
     start: new Date('2014-02-20'),
     end: new Date('2015-02-12'),
@@ -146,6 +142,7 @@ const conflicts: Conflict[] = [
     ]
   },
   {
+    id: 7,
     name: "Nagorno-Karabakh Conflict (2020)",
     start: new Date('2020-09-27'),
     end: new Date('2020-11-10'),

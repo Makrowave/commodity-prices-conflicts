@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import {AuthProvider} from "~/auth/auth-context";
+import {ToggledConflictsProvider} from "~/graph/toggled-timelines";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,9 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
       <AuthProvider>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <ToggledConflictsProvider >
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </ToggledConflictsProvider>
       </AuthProvider>
       </body>
     </html>
