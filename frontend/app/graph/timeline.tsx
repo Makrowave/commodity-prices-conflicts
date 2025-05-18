@@ -29,9 +29,9 @@ type HideButtonsProps = {
 export default function Timeline({conflicts, timeframeStart, timeframeEnd}: TimelineProps) {
 
   const filterWithTimeframe = (conflicts: Conflict[]): Conflict[] => {
-    const sorted = [...conflicts].sort((a, b) => a.start.getTime() - b.start.getTime());
+    const sorted = [...conflicts].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
     return sorted.filter(conflict => {
-      return !(conflict.start > timeframeEnd || (conflict.end != null && conflict.end < timeframeStart));
+      return !(new Date(conflict.start) > timeframeEnd || (conflict.end != null && new Date(conflict.end) < timeframeStart));
     })
   }
 
