@@ -2,9 +2,9 @@ import type {Conflict} from "~/const/dto";
 import {Box, Button, Checkbox, FormControlLabel, Tooltip} from "@mui/material";
 import {useState, useEffect, type MouseEvent, type Dispatch, type SetStateAction} from "react";
 import {useToggledConflicts} from "~/graph/toggled-timelines";
-import {calculateWidth} from "~/const/layout-consts";
+import {calculateWidth, monthUILength} from "~/const/layout-consts";
 
-const monthUILength = 30
+
 const conflictHeight = 8  // Height of each conflict bar
 const conflictSpacing = 16  // Vertical spacing between conflicts
 
@@ -50,13 +50,12 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
   const [hiddenConflicts, setHiddenConflicts] = useState<Conflict[]>([]);
 
 
-
   // Prepare conflict so they show in the same rows if there is space available
   useEffect(() => {
     const filteredConflicts = filterConflicts(conflicts)
 
     const assignments: Map<number, number> = new Map();
-    const rowsUsed: Array<{conflict: Conflict, end: Date | null, rowIndex: number}> = [];
+    const rowsUsed: Array<{ conflict: Conflict, end: Date | null, rowIndex: number }> = [];
 
     filteredConflicts.forEach((conflict) => {
       // Find the first row without overlap
@@ -104,6 +103,7 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
     <>
       <Box sx={{
         py: 2,
+        ml: "204px",
         width: monthUILength * months,
         position: "relative",
         height: (maxRow + 1) * (conflictHeight + conflictSpacing)
@@ -125,7 +125,7 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
           );
         })}
       </Box>
-      <HideButtons conflicts={timeframeFilteredConflicts} setHiddenConflicts={setHiddenConflicts} />
+      <HideButtons conflicts={timeframeFilteredConflicts} setHiddenConflicts={setHiddenConflicts}/>
     </>
   )
 }
@@ -143,7 +143,10 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
 
   const top = rowIndex * (conflictHeight + conflictSpacing);
 
-  const [position, setPosition] = useState<{x: undefined | number, y: undefined | number}>({ x: undefined, y: undefined });
+  const [position, setPosition] = useState<{ x: undefined | number, y: undefined | number }>({
+    x: undefined,
+    y: undefined
+  });
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -155,7 +158,7 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
     const x = e.clientX + scrollLeft;
     const y = e.clientY;
 
-    setPosition({ x, y });
+    setPosition({x, y});
     if (!isOpen) {
       setIsOpen(true);
     }
@@ -163,7 +166,7 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
 
   const handleMouseLeave = () => {
     setIsOpen(false);
-    setPosition({ x: undefined, y: undefined });
+    setPosition({x: undefined, y: undefined});
   };
 
   return (
@@ -210,9 +213,9 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
       title={
         <>
           {`${conflict.name}`}
-          <br />
+          <br/>
           {`Zaczął się: ${formatDate(conflict.start)}`}
-          <br />
+          <br/>
           {!conflict.end ? "Dalej trwa" : `Skończył się: ${formatDate(conflict.end)}`}
         </>
       }
@@ -220,15 +223,16 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
       <Box
         sx={{
           position: 'absolute',
-          borderBottomLeftRadius: startedBeforeTimeframe ? 0 : 4,
-          borderTopLeftRadius: startedBeforeTimeframe ? 0 : 4,
-          borderBottomRightRadius: endedAfterTimeframe ? 0 : 4,
-          borderTopRightRadius: endedAfterTimeframe ? 0 : 4,
+          borderBottomLeftRadius: startedBeforeTimeframe && width !== 0 ? 0 : 4,
+          borderTopLeftRadius: startedBeforeTimeframe && width !== 0 ? 0 : 4,
+          borderBottomRightRadius: endedAfterTimeframe && width !== 0 ? 0 : 4,
+          borderTopRightRadius: endedAfterTimeframe && width !== 0 ? 0 : 4,
           bgcolor: colors[conflict.id % colors.length],
           left: left,
           top: top,
           height: conflictHeight,
-          width: width,
+          width: width === 0 ? 9 : width,
+          transform: width === 0 ? 'translate(-4px, 0px)' : '',
           '&:hover': {
             cursor: 'pointer',
             filter: 'brightness(1.1)',
@@ -252,17 +256,17 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
   }, []);
 
   useEffect(() => {
-    if(global) {
+    if (global) {
       setHiddenConflicts(hiddenConflicts);
     }
   }, [hiddenConflicts]);
 
   const handleClick = (conflict: Conflict) => {
-    if(global) {
+    if (global) {
       toggleConflict(conflict);
       return;
     }
-    if(localHidden.some((c) => c.id === conflict.id)) {
+    if (localHidden.some((c) => c.id === conflict.id)) {
       setLocalHidden((prev) => (prev.filter((c) => c.id !== conflict.id)));
       setHiddenConflicts((prev) => (prev.filter((c) => c.id !== conflict.id)))
     } else {
@@ -272,7 +276,7 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
   }
 
   const handleToggle = () => {
-    if(global) {
+    if (global) {
       console.log(hiddenConflicts);
       setHiddenConflicts(localHidden);
     } else {
@@ -293,14 +297,14 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
         zIndex: 2,
       }}
     >
-      <Box sx={{width: calculateWidth(width-16), overflowX: 'auto', whiteSpace: 'nowrap', pb: 2, pr: 2}}>
-        <Box sx={{ display: 'inline-flex', gap: 1 }}>
+      <Box sx={{width: calculateWidth(width - 16), overflowX: 'auto', whiteSpace: 'nowrap', pb: 2, pr: 2}}>
+        <Box sx={{display: 'inline-flex', gap: 1}}>
           {
             conflicts.map((conflict) => (
               <Button variant={"contained"} key={conflict.id} sx={{
                 bgcolor: (global ? hiddenConflicts : localHidden).some((c) => c.id === conflict.id) ? "#888888" : colors[conflict.id % colors.length]
               }}
-              onClick={() => handleClick(conflict)}
+                      onClick={() => handleClick(conflict)}
               >
                 {conflict.name}
               </Button>
@@ -308,14 +312,14 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
           }
         </Box>
       </Box>
-      <FormControlLabel control={<Checkbox checked={global} onChange={handleToggle} />} label="Przełączaj pod każdym wykresem" />
+      <FormControlLabel control={<Checkbox checked={global} onChange={handleToggle}/>}
+                        label="Przełączaj pod każdym wykresem"/>
     </Box>
   )
 }
 
 
-
-const monthsBetween = (date1: Date, date2: Date): number => {
+export const monthsBetween = (date1: Date, date2: Date): number => {
   if (date1 > date2) {
     return 0;
   }

@@ -1,4 +1,38 @@
-import type {Conflict} from "~/const/dto";
+import type {CommoditiesInMonth, Conflict} from "~/const/dto";
+import {monthsBetween} from "~/graph/timeline";
+
+
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rand = mulberry32(1000);
+
+
+export const createCommodityData = (from: Date, to: Date): CommoditiesInMonth[] => {
+  const months = monthsBetween(from, to);
+  const result: CommoditiesInMonth[] = [];
+
+  for (let i = 0; i < months + 1; i++) {
+    const date = new Date(from);
+    date.setMonth(from.getMonth() + i);
+    result.push(
+      {
+        date: date,
+        coal: (rand() / 2 + 0.3) * 100,
+        oil: (rand() / 2 + 0.4) * 200
+      } as unknown as CommoditiesInMonth
+    );
+  }
+
+  return result;
+}
+
 
 export const conflicts: Conflict[] = [
   {

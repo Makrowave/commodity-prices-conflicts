@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Box, Paper, CircularProgress, Typography } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Box, Paper, CircularProgress, Typography} from "@mui/material";
 import PageNavigation from "~/navigation/page-navigation";
 import TopBar from "~/navigation/top-bar";
 import Timeline from "~/graph/timeline";
@@ -7,6 +7,9 @@ import type {Conflict, ConflictQuery} from "~/const/dto";
 import Selector from "~/graph/selector";
 import {selectorHeight} from "~/const/layout-consts";
 import GraphWrapper from "~/graph/graph-wrapper";
+import Graph from "~/graph/graph";
+import {createCommodityData} from "~/const/mock-data";
+import {energyKeyLabels} from "~/const/labels";
 
 
 const toConflictQuery = (query: ConflictQuery) => {
@@ -27,7 +30,7 @@ export default function HomePage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
-  const updateQuery= (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => {
+  const updateQuery = (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => {
     setQuery((prev) => ({...prev, [key]: value}));
     console.log(value);
   }
@@ -69,17 +72,18 @@ export default function HomePage() {
   }, [query]);
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <TopBar />
-      <PageNavigation />
-      <Paper component="main" sx={{ flexGrow: 1, mt: 8, flexDirection: "column" }}>
-        <Selector query={query} updateQuery={updateQuery} />
+    <Box sx={{display: "flex"}}>
+      <TopBar/>
+      <PageNavigation/>
+      <Paper component="main" sx={{flexGrow: 1, mt: 8, flexDirection: "column"}}>
+        <Selector query={query} updateQuery={updateQuery}/>
         <GraphWrapper sx={{marginTop: `${selectorHeight}px`}}>
-          {loading && <CircularProgress />}
+          {loading && <CircularProgress/>}
           {error && <Typography color="error">{error}</Typography>}
           {!loading && !error && (
             <>
-              <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to} />
+              <Graph dataset={createCommodityData(query.from, query.to)} labels={energyKeyLabels}/>
+              <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to}/>
             </>
           )}
         </GraphWrapper>

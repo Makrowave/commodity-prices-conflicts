@@ -12,6 +12,12 @@ export type Event = {
   date: Date
 }
 
+export type CommoditiesInMonth = {
+  date: Date
+} & {
+  [key: string]: number;
+};
+
 // Outgoing
 export type ConflictQuery = {
   from: Date
