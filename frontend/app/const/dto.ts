@@ -1,3 +1,4 @@
+// Incoming
 export type Conflict = {
   id: number,
   name: string,
@@ -9,4 +10,11 @@ export type Conflict = {
 export type Event = {
   name: string,
   date: Date
+}
+
+// Outgoing
+export type ConflictQuery = {
+  from: Date
+  to: Date
+  regions: string[];
 }

@@ -14,6 +14,7 @@ public class ConflictService
                      ?? throw new InvalidOperationException();
         
         _conflicts = conflicts
+            .Where(c => c.IntensityLevel == "2")
             .GroupBy(c => c.ConflictId)
             .Select(ConflictDto.FromConflictGrouping)
             .OrderBy(c => c.StartDate)

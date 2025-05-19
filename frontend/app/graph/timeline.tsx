@@ -2,6 +2,7 @@ import type {Conflict} from "~/const/dto";
 import {Box, Button, Checkbox, FormControlLabel, Tooltip} from "@mui/material";
 import {useState, useEffect, type MouseEvent, type Dispatch, type SetStateAction} from "react";
 import {useToggledConflicts} from "~/graph/toggled-timelines";
+import {calculateWidth} from "~/const/layout-consts";
 
 const monthUILength = 30
 const conflictHeight = 8  // Height of each conflict bar
@@ -100,7 +101,7 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
     : 0;
 
   return (
-    <Box>
+    <>
       <Box sx={{
         py: 2,
         width: monthUILength * months,
@@ -125,7 +126,7 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
         })}
       </Box>
       <HideButtons conflicts={timeframeFilteredConflicts} setHiddenConflicts={setHiddenConflicts} />
-    </Box>
+    </>
   )
 }
 
@@ -243,6 +244,12 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
   const {hiddenConflicts, toggleConflict} = useToggledConflicts();
   const [localHidden, setLocalHidden] = useState<Conflict[]>([]);
   const [global, setGlobal] = useState<boolean>(true);
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if(global) {
@@ -265,7 +272,6 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
   }
 
   const handleToggle = () => {
-
     if(global) {
       console.log(hiddenConflicts);
       setHiddenConflicts(localHidden);
@@ -276,19 +282,33 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
     setGlobal(!global);
   }
   return (
-    <Box sx={{display: 'flex', gap: 1}}>
-      <FormControlLabel control={<Checkbox checked={global} onChange={handleToggle} />} label="Globalnie" />
-      {
-        conflicts.map((conflict) => (
-          <Button variant={"contained"} key={conflict.id} sx={{
-            bgcolor: (global ? hiddenConflicts : localHidden).some((c) => c.id === conflict.id) ? "#888888" : colors[conflict.id % colors.length]
-          }}
-          onClick={() => handleClick(conflict)}
-          >
-            {conflict.name}
-          </Button>
-        ))
-      }
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 1,
+        flexDirection: 'column',
+        position: 'sticky',
+        left: 0,
+        backgroundColor: 'white',
+        zIndex: 2,
+      }}
+    >
+      <Box sx={{width: calculateWidth(width-16), overflowX: 'auto', whiteSpace: 'nowrap', pb: 2, pr: 2}}>
+        <Box sx={{ display: 'inline-flex', gap: 1 }}>
+          {
+            conflicts.map((conflict) => (
+              <Button variant={"contained"} key={conflict.id} sx={{
+                bgcolor: (global ? hiddenConflicts : localHidden).some((c) => c.id === conflict.id) ? "#888888" : colors[conflict.id % colors.length]
+              }}
+              onClick={() => handleClick(conflict)}
+              >
+                {conflict.name}
+              </Button>
+            ))
+          }
+        </Box>
+      </Box>
+      <FormControlLabel control={<Checkbox checked={global} onChange={handleToggle} />} label="Przełączaj pod każdym wykresem" />
     </Box>
   )
 }

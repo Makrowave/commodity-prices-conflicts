@@ -11,6 +11,9 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import {AuthProvider} from "~/auth/auth-context";
 import {ToggledConflictsProvider} from "~/graph/toggled-timelines";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {pl} from "date-fns/locale";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -36,11 +39,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
       <AuthProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={pl}>
         <ToggledConflictsProvider >
           {children}
           <ScrollRestoration />
           <Scripts />
         </ToggledConflictsProvider>
+        </LocalizationProvider>
       </AuthProvider>
       </body>
     </html>
