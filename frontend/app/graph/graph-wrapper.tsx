@@ -4,7 +4,7 @@ import {CircularProgress, Paper, type SxProps} from "@mui/material";
 
 type GraphWrapperProps = {
   children: ReactNode;
-  sx: SxProps | undefined;
+  sx?: SxProps;
 }
 
 export default function GraphWrapper({children, sx}: GraphWrapperProps) {

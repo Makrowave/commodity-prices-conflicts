@@ -5,11 +5,11 @@ import TopBar from "~/navigation/top-bar";
 import Timeline from "~/graph/timeline";
 import type {Conflict, ConflictQuery} from "~/const/dto";
 import Selector from "~/graph/selector";
-import {selectorHeight} from "~/const/layout-consts";
+import {selectorHeight, topBarHeight} from "~/const/layout-consts";
 import GraphWrapper from "~/graph/graph-wrapper";
 import Graph from "~/graph/graph";
 import {createCommodityData} from "~/const/mock-data";
-import {energyKeyLabels} from "~/const/labels";
+import {energyKeyLabels, foodKeyLabels, metalKeyLabels} from "~/const/labels";
 
 
 const toConflictQuery = (query: ConflictQuery) => {
@@ -75,18 +75,40 @@ export default function HomePage() {
     <Box sx={{display: "flex"}}>
       <TopBar/>
       <PageNavigation/>
-      <Paper component="main" sx={{flexGrow: 1, mt: 8, flexDirection: "column"}}>
-        <Selector query={query} updateQuery={updateQuery}/>
-        <GraphWrapper sx={{marginTop: `${selectorHeight}px`}}>
-          {loading && <CircularProgress/>}
-          {error && <Typography color="error">{error}</Typography>}
-          {!loading && !error && (
-            <>
-              <Graph dataset={createCommodityData(query.from, query.to)} labels={energyKeyLabels}/>
-              <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to}/>
-            </>
-          )}
-        </GraphWrapper>
+      <Selector query={query} updateQuery={updateQuery}/>
+      <Paper component="main"
+             sx={{flexGrow: 1, flexDirection: "column", marginTop: `${selectorHeight + topBarHeight - 10}px`}}>
+
+        {loading && <CircularProgress/>}
+        {error && <Typography color="error">{error}</Typography>}
+        {!loading && !error && (
+          <>
+            <Box id={"energy-graph"}>
+              <Typography variant={"h4"} sx={{p: 2}}>Energetyka</Typography>
+              <GraphWrapper>
+                <Graph dataset={createCommodityData(query.from, query.to, Object.keys(energyKeyLabels))}
+                       labels={energyKeyLabels}/>
+                <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to}/>
+              </GraphWrapper>
+            </Box>
+            <Box id={"food-graph"}>
+              <Typography variant={"h4"} sx={{p: 2}}>Żywność</Typography>
+              <GraphWrapper>
+                <Graph dataset={createCommodityData(query.from, query.to, Object.keys(foodKeyLabels))}
+                       labels={foodKeyLabels}/>
+                <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to}/>
+              </GraphWrapper>
+            </Box>
+            <Box id={"metal-graph"}>
+              <Typography variant={"h4"} sx={{p: 2}}>Metale</Typography>
+              <GraphWrapper>
+                <Graph dataset={createCommodityData(query.from, query.to, Object.keys(metalKeyLabels))}
+                       labels={metalKeyLabels}/>
+                <Timeline conflicts={conflicts} timeframeStart={query.from} timeframeEnd={query.to}/>
+              </GraphWrapper>
+            </Box>
+          </>
+        )}
       </Paper>
     </Box>
   );

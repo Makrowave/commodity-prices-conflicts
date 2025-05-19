@@ -14,9 +14,14 @@ function mulberry32(seed: number) {
 const rand = mulberry32(1000);
 
 
-export const createCommodityData = (from: Date, to: Date): CommoditiesInMonth[] => {
+export const createCommodityData = (from: Date, to: Date, keys: string[]): CommoditiesInMonth[] => {
   const months = monthsBetween(from, to);
   const result: CommoditiesInMonth[] = [];
+
+  const mults = []
+  for (let i = 0; i < keys.length; i += 1) {
+    mults.push({key: keys[i], mult: (rand() + i)})
+  }
 
   for (let i = 0; i < months + 1; i++) {
     const date = new Date(from);
@@ -24,13 +29,20 @@ export const createCommodityData = (from: Date, to: Date): CommoditiesInMonth[] 
     result.push(
       {
         date: date,
-        coal: (rand() / 2 + 0.3) * 100,
-        oil: (rand() / 2 + 0.4) * 200
+        ...createCommodityEntries(keys, mults)
       } as unknown as CommoditiesInMonth
     );
   }
 
   return result;
+}
+
+const createCommodityEntries = (keys: string[], mults: { key: string, mult: number }[]):
+  Record<string, number> => {
+  return keys.reduce((acc, key) => {
+    acc[key] = (rand() / 2 + 0.3) * 100 * mults.find(k => k.key === key)!.mult;
+    return acc;
+  }, {} as Record<string, number>)
 }
 
 

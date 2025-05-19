@@ -23,6 +23,7 @@ export default function Graph({dataset, labels}: GraphProps) {
             }
           }
         }}
+        height={400}
         width={(dataset.length) * monthUILength + xAxisOffset}
         grid={{vertical: true, horizontal: true}}
         xAxis={[

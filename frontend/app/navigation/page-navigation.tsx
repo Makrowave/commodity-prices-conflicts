@@ -1,8 +1,20 @@
-import {Drawer, List, ListItem} from "@mui/material";
+import {Drawer, ListItemIcon, ListItemText, MenuItem, MenuList, Typography} from "@mui/material";
 import React from "react";
-import {drawerWidth} from "~/const/layout-consts";
+import {drawerWidth, selectorHeight, topBarHeight} from "~/const/layout-consts";
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import BoltIcon from '@mui/icons-material/Bolt';
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 
 export default function PageNavigation() {
+
+  function scrollToWithOffset(id: string, offset: number = selectorHeight + topBarHeight) {
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({top, behavior: 'smooth'});
+    }
+  }
+
   return (
     <Drawer
       variant="permanent"
@@ -16,9 +28,27 @@ export default function PageNavigation() {
         },
       }}
     >
-      <List>
-        <ListItem>Wykresy</ListItem>
-      </List>
+      <Typography variant={"h6"} sx={{p: 1}}>Wykresy</Typography>
+      <MenuList>
+        <MenuItem onClick={() => scrollToWithOffset("energy-graph")}>
+          <ListItemIcon>
+            <BoltIcon/>
+          </ListItemIcon>
+          <ListItemText>Energetyka</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => scrollToWithOffset("food-graph")}>
+          <ListItemIcon>
+            <FastfoodIcon/>
+          </ListItemIcon>
+          <ListItemText>Żywność</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => scrollToWithOffset("metal-graph")}>
+          <ListItemIcon>
+            <ViewColumnIcon/>
+          </ListItemIcon>
+          <ListItemText>Metale</ListItemText>
+        </MenuItem>
+      </MenuList>
     </Drawer>
   )
 }
