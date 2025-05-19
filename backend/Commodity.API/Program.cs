@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 builder.Services.AddSingleton<ConflictService>();
+builder.Services.AddSingleton<CommodityService>();
 
 var app = builder.Build();
 
@@ -20,5 +21,9 @@ await app.Services
 app.MapGet(
     "/api/conflicts",
     ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to));
+
+app.MapGet(
+    "/api/commodities",
+    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromServices] CommodityService commodityService) => commodityService.GetCommoditiesBetween(from, to));
 
 app.Run();
