@@ -21,9 +21,9 @@ public class ConflictService
             .ToList();
     }
 
-    public IEnumerable<ConflictDto> GetConflicts(DateTimeOffset from, DateTimeOffset to)
+    public IEnumerable<ConflictDto> GetConflicts(DateTimeOffset from, DateTimeOffset to, int[] regions)
     {
         return _conflicts
-            .Where(c => c.StartDate >= from && (c.EndDate is null || c.EndDate <= to));
+            .Where(c => c.StartDate >= from && (c.EndDate is null || c.EndDate <= to) && regions.Any(r => c.Region.Contains(r)));
     }
 }

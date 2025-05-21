@@ -18,6 +18,9 @@ public class ConflictDto
 
     [JsonPropertyName("events")]
     public IReadOnlyList<EventDto> Events { get; set; } = [];
+    
+    [JsonPropertyName("region")]
+    public IReadOnlyList<int> Region { get; set; } = [];
 
     public static ConflictDto FromConflictGrouping(IGrouping<string, Conflict> grouping)
     {
@@ -37,6 +40,11 @@ public class ConflictDto
                     Name = $"{c.SideA} vs {c.SideB}",
                     Date = DateTimeOffset.Parse(c.StartDate2),
                 })
+                .ToList(),
+            Region = first.Region.Split(',')
+                .Select(s => s.Trim())
+                .Where(s => int.TryParse(s, out _))
+                .Select(int.Parse)
                 .ToList()
         };
     }

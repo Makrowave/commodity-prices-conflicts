@@ -1,14 +1,18 @@
+using System.Globalization;
 using System.Text;
 using Commodity.API.Database;
+using Commodity.API.Models;
 using Commodity.API.Services;
+using ErrorOrAspNetCoreExtensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var key = "SuperSecretKey123456!@#"u8.ToArray();
+var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException());
 
 builder.Services.AddAuthentication(options =>
     {
@@ -34,6 +38,8 @@ builder.Services.AddCors();
 builder.Services.AddDbContext<CommodityDbContext>();
 builder.Services.AddSingleton<ConflictService>();
 builder.Services.AddSingleton<CommodityService>();
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
@@ -45,10 +51,13 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-await app.Services
-    .GetRequiredService<CommodityDbContext>()
-    .Database
-    .MigrateAsync();
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider
+        .GetRequiredService<CommodityDbContext>()
+        .Database
+        .MigrateAsync();
+}
 
 await app.Services
     .GetRequiredService<ConflictService>()
@@ -56,12 +65,26 @@ await app.Services
 
 app.MapGet(
     "/api/conflicts",
-    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to))
-    .RequireAuthorization();
+    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromQuery] int[] region, [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to, region))
+    ;
 
 app.MapGet(
     "/api/commodities",
     ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromServices] CommodityService commodityService) => commodityService.GetCommoditiesBetween(from, to))
-    .RequireAuthorization();
+    ;
+
+app.MapPost("/api/login",
+    async ([FromBody] LoginDto dto, [FromServices] UserService userService) =>
+    {
+        var errorOr = await userService.Login(dto);
+        return errorOr.ToOk();
+    });
+
+app.MapPost("/api/register",
+    async ([FromBody] RegisterDto dto, [FromServices] UserService userService) =>
+    {
+        var errorOr = await userService.Register(dto);
+        return errorOr.ToOk();   
+    });
 
 app.Run();
