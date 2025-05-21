@@ -3,7 +3,7 @@ package org.example;
 import org.example.models.CommodityRecord;
 import java.io.File;
 import java.util.List;
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 public class Main {
     public static void main(String[] args) throws Exception {

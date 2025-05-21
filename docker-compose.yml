@@ -10,11 +10,11 @@ services:
       MYSQL_DATABASE: commodities
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - commodity
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -22,12 +22,43 @@ services:
     restart: always
     environment:
       PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: root
+      PMA_USER: user
+      PMA_PASSWORD: password
     ports:
       - "8080:80"
     depends_on:
       - mysql
+    networks:
+      - commodity
+
+  backend:
+    image: commodity/csharp
+    container_name: backend
+    build:
+      context: .
+      dockerfile: dotnet.Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - commodity
+    ports:
+      - "8888:8080"
+    environment:
+      MySql__ConnectionString: "server=mysql;database=commodities;user=user;password=password"
+      Soap__Endpoint: "http://soap:8080/Commodity"
+    entrypoint: [ "sh", "-c", "sleep 10 && dotnet Commodity.API.dll" ]
+
+  soap:
+    image: commodity/soap
+    container_name: soap
+    build:
+      context: .
+      dockerfile: java.Dockerfile
+    networks:
+      - commodity
+
+networks:
+  commodity:
 
 volumes:
   mysql_data:

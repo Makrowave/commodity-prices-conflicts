@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Commodity.API.Database;
 
-public class CommodityDbContext : DbContext
+public class CommodityDbContext(IConfiguration configuration) : DbContext
 {
     public virtual DbSet<User> Users { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql("server=localhost;database=commodities;user=user;password=password", ServerVersion.AutoDetect("server=localhost;database=commodities;user=user;password=password"));
+        var connString = configuration["MySql:ConnectionString"]!;
+        optionsBuilder.UseMySql(connString, ServerVersion.AutoDetect(connString));
         base.OnConfiguring(optionsBuilder);
     }
 }

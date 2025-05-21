@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.models.CommodityRecord;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
