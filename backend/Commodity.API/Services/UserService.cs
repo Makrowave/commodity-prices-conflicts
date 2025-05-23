@@ -44,18 +44,11 @@ public class UserService(
         var errors = await ValidateDto(dto);
         if (errors.Count > 0)
             return ErrorOr<TokenDto>.From(errors);
-        
-        var salt = new byte[16];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(salt);
-        }
 
         var user = new User
         {
             Email = dto.Email,
-            PasswordSalt = Convert.ToBase64String(salt),
-            PasswordHash = Argon2.Hash(Encoding.UTF8.GetBytes(dto.Password), salt),
+            PasswordHash = Argon2.Hash(dto.Password),
             Name = dto.Username
         };
 
