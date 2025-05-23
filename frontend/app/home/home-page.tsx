@@ -91,9 +91,11 @@ export default function HomePage() {
                 {isCommodityFetching ? <CircularProgress/> : <></>}
               </Box>
               <GraphWrapper>
+                {isCommodityError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {!isCommodityError && commodityData &&
                   <Graph dataset={commodityData} labels={energyKeyLabels}/>
                 }
+                {isConflictError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {
                   !isConflictError && !isConflictLoading &&
                   <Timeline conflicts={conflictData!} timeframeStart={query.from} timeframeEnd={query.to}/>
@@ -106,9 +108,11 @@ export default function HomePage() {
                 {isCommodityFetching ? <CircularProgress/> : <></>}
               </Box>
               <GraphWrapper>
+                {isCommodityError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {!isCommodityError && commodityData &&
                   <Graph dataset={commodityData} labels={foodKeyLabels}/>
                 }
+                {isConflictError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {
                   !isConflictError && !isConflictLoading &&
                   <Timeline conflicts={conflictData!} timeframeStart={query.from} timeframeEnd={query.to}/>
@@ -121,9 +125,11 @@ export default function HomePage() {
                 {isCommodityFetching ? <CircularProgress/> : <></>}
               </Box>
               <GraphWrapper>
+                {isCommodityError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {!isCommodityError && commodityData &&
                   <Graph dataset={commodityData} labels={metalKeyLabels}/>
                 }
+                {isConflictError && <Typography color={"error"} sx={{p: 4}}>Error</Typography>}
                 {
                   !isConflictError && !isConflictLoading &&
                   <Timeline conflicts={conflictData!} timeframeStart={query.from} timeframeEnd={query.to}/>
