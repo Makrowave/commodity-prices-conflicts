@@ -169,7 +169,6 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
 
   const handleMouseLeave = () => {
     setIsOpen(false);
-    setPosition({x: undefined, y: undefined});
   };
 
   return (
@@ -184,14 +183,10 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
             clientWidth: 0,
             // @ts-ignore
             getBoundingClientRect: () => ({
-              // @ts-ignore
-              top: position.y,
-              // @ts-ignore
-              left: position.x,
-              // @ts-ignore
-              right: position.x,
-              // @ts-ignore
-              bottom: position.y,
+              top: position.y ?? 0,
+              left: position.x ?? 0,
+              right: position.x ?? 0,
+              bottom: position.y ?? 0,
               width: 0,
               height: 0,
             })
@@ -217,9 +212,9 @@ function ConflictTimeline({conflict, timeframeStart, timeframeEnd, rowIndex}: Co
         <>
           {`${conflict.name}`}
           <br/>
-          {`Zaczął się: ${formatDate(conflict.start)}`}
+          {`Started: ${formatDate(conflict.start)}`}
           <br/>
-          {!conflict.end ? "Dalej trwa" : `Skończył się: ${formatDate(conflict.end)}`}
+          {!conflict.end ? "Ongoing" : `Ended: ${formatDate(conflict.end)}`}
         </>
       }
     >

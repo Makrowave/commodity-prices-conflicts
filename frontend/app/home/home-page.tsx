@@ -29,7 +29,7 @@ export default function HomePage() {
   const [query, setQuery] = useState<ConflictQuery>({
     from: new Date("2010-01-01"),
     to: new Date(),
-    regions: [],
+    regions: ["1", "2", "3", "4", "5"],
   });
   const updateQuery = (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => {
     setQuery((prev) => ({...prev, [key]: value}));
