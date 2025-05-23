@@ -1,4 +1,4 @@
-import type {CommoditiesInMonth, Conflict} from "~/const/dto";
+import type {CommoditiesInMonth, Conflict} from "~/const/models";
 import {monthsBetween} from "~/graph/timeline";
 
 

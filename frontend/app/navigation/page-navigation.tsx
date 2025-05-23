@@ -28,25 +28,25 @@ export default function PageNavigation() {
         },
       }}
     >
-      <Typography variant={"h6"} sx={{p: 1}}>Wykresy</Typography>
+      <Typography variant={"h6"} sx={{p: 1}}>Graphs</Typography>
       <MenuList>
         <MenuItem onClick={() => scrollToWithOffset("energy-graph")}>
           <ListItemIcon>
             <BoltIcon/>
           </ListItemIcon>
-          <ListItemText>Energetyka</ListItemText>
+          <ListItemText>Energy</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => scrollToWithOffset("food-graph")}>
           <ListItemIcon>
             <FastfoodIcon/>
           </ListItemIcon>
-          <ListItemText>Żywność</ListItemText>
+          <ListItemText>Food</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => scrollToWithOffset("metal-graph")}>
           <ListItemIcon>
             <ViewColumnIcon/>
           </ListItemIcon>
-          <ListItemText>Metale</ListItemText>
+          <ListItemText>Metals</ListItemText>
         </MenuItem>
       </MenuList>
     </Drawer>

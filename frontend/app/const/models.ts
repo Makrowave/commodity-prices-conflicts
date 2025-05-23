@@ -6,6 +6,13 @@ export type Conflict = {
   end: Date | null
   events: Event[]
 }
+export type ConflictDto = {
+  id: number,
+  name: string,
+  start: string,
+  end: string | null
+  events: Event[]
+}
 
 export type Event = {
   name: string,

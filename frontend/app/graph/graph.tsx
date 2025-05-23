@@ -1,17 +1,18 @@
 import {LineChart} from "@mui/x-charts";
-import type {CommoditiesInMonth} from "~/const/dto";
+import type {CommoditiesInMonth} from "~/const/models";
 import {monthUILength} from "~/const/layout-consts";
-import type {LabelType} from "~/const/labels";
+import type {CommodityLabel} from "~/const/labels";
 import {format} from "date-fns";
 import {Box} from "@mui/material";
 
 type GraphProps = {
   dataset: CommoditiesInMonth[]
-  labels: LabelType
+  labels: CommodityLabel[]
 }
-const xAxisOffset = 55
-export default function Graph({dataset, labels}: GraphProps) {
 
+const xAxisOffset = 55;
+
+export default function Graph({dataset, labels}: GraphProps) {
   return (
     <Box sx={{display: "inline-block"}}>
       <LineChart
@@ -24,22 +25,22 @@ export default function Graph({dataset, labels}: GraphProps) {
           }
         }}
         height={400}
-        width={(dataset.length) * monthUILength + xAxisOffset}
+        width={dataset.length * monthUILength + xAxisOffset}
         grid={{vertical: true, horizontal: true}}
         xAxis={[
           {
             scaleType: "point",
             dataKey: "date",
-            valueFormatter: (date: Date) => format(date as Date, 'MM/yyyy'),
+            valueFormatter: (date: Date) => format(date as Date, "MM/yyyy"),
           },
         ]}
-        series={Object.keys(labels).map((key) => ({
+        series={labels.map(({key, label, unit}) => ({
           dataKey: key,
-          label: labels[key],
+          label: `${label} ${unit}`,
           showMark: false
         }))}
         dataset={dataset}
       />
     </Box>
-  )
+  );
 }

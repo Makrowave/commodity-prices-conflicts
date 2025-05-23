@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, type ReactNode } from "react";
-import type { Conflict } from "~/const/dto";
+import React, {createContext, useContext, useState, type ReactNode} from "react";
+import type {Conflict} from "~/const/models";
 
 type ToggledConflictsContextType = {
   hiddenConflicts: Conflict[];
@@ -7,14 +7,13 @@ type ToggledConflictsContextType = {
 };
 
 
-
 const ToggleConflictsContext = createContext<ToggledConflictsContextType | undefined>(undefined);
 
-export const ToggledConflictsProvider = ({ children }: { children: ReactNode }) => {
+export const ToggledConflictsProvider = ({children}: { children: ReactNode }) => {
   const [hiddenConflicts, setHiddenConflicts] = useState<Conflict[]>([]);
 
   const toggleConflict = (conflict: Conflict) => {
-    if(isHidden(conflict)) {
+    if (isHidden(conflict)) {
       setHiddenConflicts((prev) => (prev.filter((c) => c.id !== conflict.id)));
     } else {
       setHiddenConflicts((prev) => [...prev, conflict]);

@@ -9,7 +9,7 @@ import {
   Toolbar
 } from "@mui/material";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import type {ConflictQuery} from "~/const/dto";
+import type {ConflictQuery} from "~/const/models";
 import {drawerWidth, topBarHeight} from "~/const/layout-consts";
 
 type SelectorProps = {
@@ -41,7 +41,7 @@ export default function Selector({updateQuery, query}: SelectorProps) {
             return date
           })()}
           sx={{mx: 1}}
-          label={"Od"} views={['year', 'month']}
+          label={"After"} views={['year', 'month']}
           value={query.from}
           onChange={(value) => updateQuery("from", value!)}/>
         <DatePicker
@@ -52,19 +52,19 @@ export default function Selector({updateQuery, query}: SelectorProps) {
             return date
           })()}
           sx={{mx: 1}}
-          label={"Do"}
+          label={"Before"}
           views={['year', 'month']}
           value={query.to}
           onChange={(value) => updateQuery("to", value!)}/>
         <FormControl sx={{mx: 1, width: 500}}>
-          <InputLabel id="region-select">Regiony</InputLabel>
+          <InputLabel id="region-select">Regions</InputLabel>
           <Select
             labelId="region-select"
             MenuProps={MenuProps}
             multiple
             onChange={handleChange}
             value={query.regions}
-            input={<OutlinedInput id="region-select" label="Regiony"/>}
+            input={<OutlinedInput id="region-select" label="Regions"/>}
             renderValue={(selected) => (
               <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
                 {selected.map((value) => (
@@ -89,11 +89,11 @@ export default function Selector({updateQuery, query}: SelectorProps) {
 
 
 const regions = [
-  {value: "1", name: "Europa"},
-  {value: "2", name: "Bliski wschód"},
-  {value: "3", name: "Azja"},
-  {value: "4", name: "Afryka"},
-  {value: "5", name: "Ameryki"},
+  {value: "1", name: "Europe"},
+  {value: "2", name: "Middle East"},
+  {value: "3", name: "Asia"},
+  {value: "4", name: "Africa"},
+  {value: "5", name: "Americas"},
 ]
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

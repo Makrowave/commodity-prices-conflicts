@@ -1,4 +1,4 @@
-import type {Conflict} from "~/const/dto";
+import type {Conflict} from "~/const/models";
 import {Box, Button, Checkbox, FormControlLabel, Tooltip} from "@mui/material";
 import {useState, useEffect, type MouseEvent, type Dispatch, type SetStateAction} from "react";
 import {useToggledConflicts} from "~/graph/toggled-timelines";
@@ -30,6 +30,9 @@ type HideButtonsProps = {
 export default function Timeline({conflicts, timeframeStart, timeframeEnd}: TimelineProps) {
 
   const filterWithTimeframe = (conflicts: Conflict[]): Conflict[] => {
+    if (conflicts.length === 0) {
+      return conflicts;
+    }
     const sorted = [...conflicts].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
     return sorted.filter(conflict => {
       return !(new Date(conflict.start) > timeframeEnd || (conflict.end != null && new Date(conflict.end) < timeframeStart));
@@ -313,7 +316,7 @@ function HideButtons({conflicts, setHiddenConflicts}: HideButtonsProps) {
         </Box>
       </Box>
       <FormControlLabel control={<Checkbox checked={global} onChange={handleToggle}/>}
-                        label="Przełączaj pod każdym wykresem"/>
+                        label="Toggle on all charts"/>
     </Box>
   )
 }

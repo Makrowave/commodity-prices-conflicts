@@ -3,7 +3,7 @@ import {useAuth} from "~/auth/auth-context";
 import React, {useState, type MouseEvent} from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MaterialModal from "~/modal/material-modal";
-import LoginModal from "~/login/login-modal";
+import AuthModal from "~/login/auth-modal";
 
 export default function TopBar() {
 
@@ -26,24 +26,25 @@ export default function TopBar() {
   }
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Nazwa Projektu
+        <Typography variant="h6" noWrap component="div" sx={{flexGrow: 1}}>
+          Commodity Prices and Conflicts
         </Typography>
         {
           isLoggedIn ? (
             <>
-              <Button color="inherit" sx={{textTransform: "none"}} startIcon={<AccountCircleIcon />} onClick={handleClick} >
+              <Button color="inherit" sx={{textTransform: "none"}} startIcon={<AccountCircleIcon/>}
+                      onClick={handleClick}>
                 {username}
               </Button>
-            <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
+              <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
             </>
           ) : (
-            <MaterialModal button={<Button color="inherit">Zaloguj się</Button>} label={"Zaloguj się"} >
-              <LoginModal />
+            <MaterialModal button={<Button color="inherit">Log in</Button>} label={"Log in"}>
+              <AuthModal/>
             </MaterialModal>
           )
         }
