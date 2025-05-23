@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  frontend:
+    image: commodity/frontend
+    container_name: frontend
+    build: 
+      context: .
+      dockerfile: frontend.Dockerfile
+    depends_on:
+      - backend
+    networks:
+      - commodity
+    ports:
+      - "3000:3000"
   mysql:
     image: mysql:8.0
     container_name: mysql
