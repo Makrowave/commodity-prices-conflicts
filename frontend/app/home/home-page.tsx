@@ -24,11 +24,20 @@ const toConflictQuery = (query: ConflictQuery) => {
   return resultQuery;
 }
 
+const toDateQuery = (query: ConflictQuery) => {
+  const date2 = new Date(query.to);
+  date2.setMonth(date2.getMonth() + 1);
+  return new URLSearchParams({
+    from: (new Date(query.from)).toISOString(),
+    to: (new Date(date2)).toISOString(),
+  });
+}
+
 export default function HomePage() {
   const {isLoggedIn} = useAuth()
   const [query, setQuery] = useState<ConflictQuery>({
     from: new Date("2010-01-01"),
-    to: new Date(),
+    to: new Date("2025-03-01"),
     regions: ["1", "2", "3", "4", "5"],
   });
   const updateQuery = (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => {
@@ -44,7 +53,7 @@ export default function HomePage() {
   } = useQuery({
     queryKey: [endpoints.commodities, query.from, query.to],
     queryFn: async () => {
-      const response = await axiosPrivate.get(`${endpoints.commodities}?from=${(new Date(query.from)).toISOString()}&to=${(new Date(query.to)).toISOString()}`);
+      const response = await axiosPrivate.get(`${endpoints.commodities}?${toDateQuery(query)}`);
       return response.data as CommoditiesInMonth[];
     },
     enabled: isLoggedIn,

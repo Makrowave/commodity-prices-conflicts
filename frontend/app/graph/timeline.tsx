@@ -2,7 +2,7 @@ import type {Conflict} from "~/const/models";
 import {Box, Button, Checkbox, FormControlLabel, Tooltip} from "@mui/material";
 import {useState, useEffect, type MouseEvent, type Dispatch, type SetStateAction} from "react";
 import {useToggledConflicts} from "~/graph/toggled-timelines";
-import {calculateWidth, monthUILength} from "~/const/layout-consts";
+import {calculateWidth, legendWidth, monthUILength} from "~/const/layout-consts";
 
 
 const conflictHeight = 8  // Height of each conflict bar
@@ -104,16 +104,36 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
 
   return (
     <>
-      <Box sx={{
-        py: 2,
-        ml: "204px",
-        width: monthUILength * months,
-        position: "relative",
-        height: (maxRow + 1) * (conflictHeight + conflictSpacing)
-      }}>
+      <Box
+        sx={{
+          py: 2,
+          ml: `${legendWidth + 2 * monthUILength + 21.5}px`,
+          width: monthUILength * months,
+          position: "relative",
+          height: (maxRow + 1) * (conflictHeight + conflictSpacing),
+        }}
+      >
+        {/* Vertical lines */}
+        {Array.from({length: months}, (_, i) => (
+          <Box
+            key={i}
+            sx={{
+              position: "absolute",
+              top: -40,
+              bottom: 0,
+              left: i * monthUILength,
+              borderLeft: "1px solid #ddd",
+              zIndex: 0,
+            }}
+          />
+        ))}
+
+        {/* Conflict components */}
         {filterConflicts(timeframeFilteredConflicts).map((conflict) => {
-          // Skip conflicts outside the timeframe
-          if (conflict.start > timeframeEnd || (conflict.end != null && conflict.end < timeframeStart)) {
+          if (
+            conflict.start > timeframeEnd ||
+            (conflict.end != null && conflict.end < timeframeStart)
+          ) {
             return null;
           }
 
@@ -128,8 +148,13 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
           );
         })}
       </Box>
-      <HideButtons conflicts={timeframeFilteredConflicts} setHiddenConflicts={setHiddenConflicts}/>
+
+      <HideButtons
+        conflicts={timeframeFilteredConflicts}
+        setHiddenConflicts={setHiddenConflicts}
+      />
     </>
+
   )
 }
 

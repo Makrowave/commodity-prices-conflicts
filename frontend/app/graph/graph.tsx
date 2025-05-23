@@ -1,6 +1,6 @@
 import {LineChart} from "@mui/x-charts";
 import type {CommoditiesInMonth} from "~/const/models";
-import {monthUILength} from "~/const/layout-consts";
+import {legendWidth, monthUILength} from "~/const/layout-consts";
 import type {CommodityLabel} from "~/const/labels";
 import {format} from "date-fns";
 import {Box} from "@mui/material";
@@ -14,13 +14,16 @@ const xAxisOffset = 55;
 
 export default function Graph({dataset, labels}: GraphProps) {
   return (
-    <Box sx={{display: "inline-block"}}>
+    <Box sx={{display: "inline-block", zIndex: 2}}>
       <LineChart
         slotProps={{
           legend: {
             direction: "vertical",
             position: {
               horizontal: "start"
+            },
+            sx: {
+              width: legendWidth,
             }
           }
         }}

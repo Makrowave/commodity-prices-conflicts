@@ -45,7 +45,7 @@ export default function Selector({updateQuery, query}: SelectorProps) {
           value={query.from}
           onChange={(value) => updateQuery("from", value!)}/>
         <DatePicker
-          maxDate={new Date()}
+          maxDate={new Date("2025/03/01")}
           minDate={(() => {
             const date = new Date(query.from)
             date.setMonth(date.getMonth() + 1)
