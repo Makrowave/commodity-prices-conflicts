@@ -43,13 +43,15 @@ builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -66,12 +68,13 @@ await app.Services
 app.MapGet(
     "/api/conflicts",
     ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromQuery] int[] region, [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to, region))
-    ;
+    .RequireAuthorization();
 
 app.MapGet(
     "/api/commodities",
-    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromServices] CommodityService commodityService) => commodityService.GetCommoditiesBetween(from, to))
-    ;
+    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to,
+        [FromServices] CommodityService commodityService) => commodityService.GetCommoditiesBetween(from, to))
+    .RequireAuthorization();
 
 app.MapPost("/api/login",
     async ([FromBody] LoginDto dto, [FromServices] UserService userService) =>
