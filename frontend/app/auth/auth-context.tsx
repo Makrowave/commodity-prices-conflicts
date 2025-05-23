@@ -18,35 +18,56 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
   const [token, setToken] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const login = async (email: string, password: string): Promise<string> => {
-    const response = await axiosPublic.post(endpoints.login,
-      {email, password},
-      {headers: {'Content-Type': 'application/json'}})
-
-    if (response.status === 200) {
+    try {
+      const response = await axiosPublic.post(
+        endpoints.login,
+        {email, password},
+        {headers: {'Content-Type': 'application/json'}}
+      );
       setUsername(email);
       setToken(response.data.token);
       setIsLoggedIn(true);
       return "";
-    } else {
-      return response.data.detail
+    } catch (error: any) {
+      if (error.response) {
+        return error.response.data?.detail || "Login failed";
+      } else if (error.request) {
+        return "No response from server. Please check your connection.";
+      } else {
+        return `Login error: ${error.message}`;
+      }
     }
-  }
+  };
 
-  const register = async (username: string, email: string, password: string, passwordConfirm: string): Promise<string> => {
-    const response = await axiosPublic.post(endpoints.register,
-      {email, username, password, passwordConfirm},
-      {headers: {'Content-Type': 'application/json'}})
 
-    if (response.status === 200) {
+  const register = async (
+    username: string,
+    email: string,
+    password: string,
+    passwordConfirm: string
+  ): Promise<string> => {
+    try {
+      const response = await axiosPublic.post(
+        endpoints.register,
+        {email, username, password, passwordConfirm},
+        {headers: {'Content-Type': 'application/json'}}
+      );
+
       setUsername(email);
-      console.log(response.data.token);
       setToken(response.data.token);
       setIsLoggedIn(true);
       return "";
-    } else {
-      return response.data.detail
+    } catch (error: any) {
+      if (error.response) {
+        return error.response.data?.detail || "Registration failed";
+      } else if (error.request) {
+        return "No response from server. Please check your connection.";
+      } else {
+        return `Registration error: ${error.message}`;
+      }
     }
-  }
+  };
+
 
   const logout = () => {
     setUsername("");

@@ -8,12 +8,11 @@ export const axiosPublic = axios.create({
 
 export const axiosPrivate = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  // withCredentials: true,
 });
 
 
 export const useAxiosPrivate = () => {
-  const {username, token} = useAuth();
+  const {username, token, logout} = useAuth();
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
@@ -23,8 +22,20 @@ export const useAxiosPrivate = () => {
       (error) => Promise.reject(error)
     );
 
+    const responseIntercept = axiosPrivate.interceptors.response.use(
+      (response) => (response),
+      (error) => {
+        console.log(error);
+        if (error.response && error.response.status === 401) {
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    )
+
     return () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
+      axiosPrivate.interceptors.response.eject(responseIntercept);
     };
   }, [username, token]);
 

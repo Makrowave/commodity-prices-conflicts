@@ -27,6 +27,15 @@ export default function PasswordInput({value, onChange, label, error}: PasswordI
     <FormControl variant="outlined" error={error}>
       <InputLabel htmlFor="password">{label}</InputLabel>
       <OutlinedInput
+        sx={{
+          input: {
+            "&:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 1000px #eeeeee inset",
+              WebkitTextFillColor: "black",
+              transition: "background-color 5000s ease-in-out 0s",
+            },
+          },
+        }}
         id="password"
         type={showPassword ? "text" : "password"}
         value={value}

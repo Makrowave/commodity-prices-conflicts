@@ -1,11 +1,12 @@
 import {useAuth} from "~/auth/auth-context";
-import {Box, Button, TextField, Typography} from "@mui/material";
-import {type Dispatch, type SetStateAction, useState} from "react";
+import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import {useState} from "react";
 import PasswordInput from "~/login/password-input";
 import type {ModalBody} from "~/modal/material-modal";
+import {regexes} from "~/const/regexes";
 
 type ModalWithError = {
-  setError: Dispatch<SetStateAction<string>>;
+  setError: (error: string) => void
 }
 
 export default function AuthModal({closeModal}: ModalBody) {
@@ -30,7 +31,16 @@ export default function AuthModal({closeModal}: ModalBody) {
       </Box>
       {
         loginError !== "" &&
-        <Box>
+        <Box
+          sx={{
+            borderRadius: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "error.main",
+            color: "white",
+            p: 2
+          }}>
           <Typography>
             {loginError}
           </Typography>
@@ -38,9 +48,9 @@ export default function AuthModal({closeModal}: ModalBody) {
       }
       {
         isLogin ? (
-          <LoginContent closeModal={closeModal} setError={setLoginError}/>
+          <LoginContent closeModal={closeModal} setError={(error) => setLoginError(error)}/>
         ) : (
-          <RegisterContent closeModal={closeModal} setError={setLoginError}/>
+          <RegisterContent closeModal={closeModal} setError={(error) => setLoginError(error)}/>
         )
       }
     </>
@@ -49,12 +59,21 @@ export default function AuthModal({closeModal}: ModalBody) {
 
 function LoginContent({closeModal, setError}: ModalBody & ModalWithError) {
   const {login} = useAuth()
-  const [username, setUsername] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
+  const validEmail = regexes.email.test(email)
+  const validPassword = regexes.password.test(email)
+  const disabledButton = !(validPassword && validEmail)
+
 
   const handleLogin = async () => {
-    const result = await login(username, password)
+    setError("")
+    setIsProcessing(true)
+    const result = await login(email, password)
+    setIsProcessing(false)
     setError(result)
+    console.log(result)
     if (result === "") {
       if (closeModal) closeModal()
     }
@@ -62,10 +81,27 @@ function LoginContent({closeModal, setError}: ModalBody & ModalWithError) {
   }
   return (
     <>
-      <TextField label={"E-mail"} value={username} onChange={(e) => setUsername(e.target.value)}/>
-      <PasswordInput label={"Password"} value={password} onChange={setPassword}/>
-      <Button color={"primary"} variant={"contained"} onClick={handleLogin}>
-        Log in
+      <TextField
+        sx={{
+          input: {
+            "&:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 1000px #eeeeee inset",
+              WebkitTextFillColor: "black",
+              transition: "background-color 5000s ease-in-out 0s",
+            },
+          },
+        }}
+        label={"E-mail"}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        error={!validEmail}/>
+      <PasswordInput
+        label={"Password"}
+        value={password}
+        onChange={setPassword}
+        error={!validPassword}/>
+      <Button color={"primary"} variant={"contained"} onClick={handleLogin} disabled={disabledButton}>
+        {isProcessing ? <CircularProgress size={24} color="inherit"/> : "Log in"}
       </Button>
     </>
   )
@@ -77,9 +113,18 @@ function RegisterContent({closeModal, setError}: ModalBody & ModalWithError) {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
+  const validUsername = regexes.username.test(username)
+  const validEmail = regexes.email.test(email)
+  const validPassword = regexes.password.test(password)
+  const validConfirmPassword = password === confirmPassword
+  const disabledButton = !(validUsername && validEmail && validPassword && validConfirmPassword)
 
   const handleRegister = async () => {
+    setError("")
+    setIsProcessing(true)
     const result = await register(username, email, password, confirmPassword)
+    setIsProcessing(false)
     setError(result)
     if (result === "") {
       if (closeModal) closeModal()
@@ -87,15 +132,40 @@ function RegisterContent({closeModal, setError}: ModalBody & ModalWithError) {
   }
   return (
     <>
-      <TextField label={"Username"} value={username} onChange={(e) => setUsername(e.target.value)}/>
-      <TextField label={"E-mail"} value={email} onChange={(e) => setEmail(e.target.value)}/>
-      <PasswordInput label={"Password"} value={password} onChange={setPassword}/>
-      <PasswordInput error={confirmPassword !== password}
+      <TextField
+        sx={{
+          input: {
+            "&:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 1000px #eeeeee inset",
+              WebkitTextFillColor: "black",
+              transition: "background-color 5000s ease-in-out 0s",
+            },
+          },
+        }} label={"Username"}
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        error={!validUsername}/>
+      <TextField
+        sx={{
+          input: {
+            "&:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 1000px #eeeeee inset",
+              WebkitTextFillColor: "black",
+              transition: "background-color 5000s ease-in-out 0s",
+            },
+          },
+        }}
+        label={"E-mail"}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        error={!validPassword}/>
+      <PasswordInput label={"Password"} value={password} onChange={setPassword} error={!validPassword}/>
+      <PasswordInput error={!validConfirmPassword}
                      label={"Confirm password"}
                      value={confirmPassword}
                      onChange={setConfirmPassword}/>
-      <Button color={"primary"} variant={"contained"} onClick={handleRegister}>
-        Sign up
+      <Button color={"primary"} variant={"contained"} onClick={handleRegister} disabled={disabledButton}>
+        {isProcessing ? <CircularProgress size={24} color="inherit"/> : "Sign up"}
       </Button>
     </>
   )
