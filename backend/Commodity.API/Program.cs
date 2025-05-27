@@ -51,8 +51,6 @@ app.UseCors(x => x
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider

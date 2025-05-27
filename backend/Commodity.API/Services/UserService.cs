@@ -54,9 +54,20 @@ public class UserService(
 
         await using (var transaction = await dbContext.Database.BeginTransactionAsync())
         {
-            dbContext.Users.Add(user);
-            await dbContext.SaveChangesAsync();
-            await transaction.CommitAsync();
+            try
+            {
+                dbContext.Users.Add(user);
+                await dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                return ErrorOr<TokenDto>.From(
+                    [
+                        Error.Failure(description: $"Failed to commit data to the database. ({e.Message})")
+                    ]);
+            }
         }
         
         return jwt.GetTokenFor(user);
