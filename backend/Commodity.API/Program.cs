@@ -65,7 +65,8 @@ await app.Services
 
 app.MapGet(
     "/api/conflicts",
-    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromQuery] int[] region, [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to, region))
+    ([FromQuery] DateTimeOffset from, [FromQuery] DateTimeOffset to, [FromQuery] int[] region, 
+        [FromServices] ConflictService conflictService) => conflictService.GetConflicts(from, to, region))
     .RequireAuthorization();
 
 app.MapGet(

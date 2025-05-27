@@ -57,7 +57,7 @@ export default function HomePage() {
       return response.data as CommoditiesInMonth[];
     },
     enabled: isLoggedIn,
-    placeholderData: (previousData, previousQuery) => previousData,
+    placeholderData: (previousData) => previousData,
   });
 
 
@@ -73,14 +73,15 @@ export default function HomePage() {
       })) as Conflict[];
     },
     enabled: isLoggedIn,
-    placeholderData: (previousData, previousQuery) => previousData,
+    placeholderData: (previousData) => previousData,
   })
 
   return (
     <Box sx={{display: "flex", height: "100%"}}>
       <TopBar/>
       <PageNavigation/>
-      <Selector query={query} updateQuery={updateQuery}/>
+      <Selector query={query} updateQuery={updateQuery} conflicts={conflictData ?? []}
+                commodities={commodityData ?? []}/>
       {
         isLoggedIn ? (
           <Paper component="main"

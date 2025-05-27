@@ -1,5 +1,5 @@
 import {
-  AppBar, Box, Chip,
+  AppBar, Box, Button, Chip,
   FormControl,
   InputLabel,
   MenuItem,
@@ -9,16 +9,33 @@ import {
   Toolbar
 } from "@mui/material";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import type {ConflictQuery} from "~/const/models";
+import type {CommoditiesInMonth, Conflict, ConflictQuery} from "~/const/models";
 import {drawerWidth, topBarHeight} from "~/const/layout-consts";
+import {energyKeyLabels, foodKeyLabels, metalKeyLabels} from "~/const/labels";
 
 type SelectorProps = {
   updateQuery: (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => void;
   query: ConflictQuery;
+  conflicts: Conflict[];
+  commodities: CommoditiesInMonth[];
+};
+
+const handleDownload = (conflicts: Conflict[], commodities: CommoditiesInMonth[]) => {
+  const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+    JSON.stringify({
+      conflicts: conflicts,
+      commodities: commodities,
+      labels: [...foodKeyLabels, ...energyKeyLabels, ...metalKeyLabels]
+    }, null, 2)
+  )}`;
+  const link = document.createElement("a");
+  link.href = jsonString;
+  link.download = "data.json";
+  link.click();
 };
 
 
-export default function Selector({updateQuery, query}: SelectorProps) {
+export default function Selector({updateQuery, query, conflicts, commodities}: SelectorProps) {
 
   const handleChange = (event: SelectChangeEvent<typeof query.regions>) => {
     const {
@@ -82,6 +99,9 @@ export default function Selector({updateQuery, query}: SelectorProps) {
             }
           </Select>
         </FormControl>
+        <Button onClick={() => handleDownload(conflicts, commodities)} variant="contained" color="primary">
+          Export data
+        </Button>
       </Toolbar>
     </AppBar>
   )
