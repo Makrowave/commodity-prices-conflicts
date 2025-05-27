@@ -10,6 +10,6 @@ public class Main {
         File xmlFile = new File("commodities.xml");
         List<CommodityRecord> records = CommodityXMLParser.parse(xmlFile);
 
-        Endpoint.publish("http://localhost:8080/Commodity", new CommodityWS(records));
+        Endpoint.publish("http://0.0.0.0:8080/Commodity", new CommodityWS(records));
     }
 }

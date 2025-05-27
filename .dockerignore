@@ -1,9 +1,4 @@
-.git
-.idea
+.react-router
 build
-.gradle
-*.iml
-*.log
-out
-bin
-obj
+node_modules
+README.md
