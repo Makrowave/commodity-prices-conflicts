@@ -107,7 +107,7 @@ export default function Timeline({conflicts, timeframeStart, timeframeEnd}: Time
       <Box
         sx={{
           py: 2,
-          ml: `${legendWidth + 2 * monthUILength + 21.5}px`,
+          ml: `${legendWidth + 2 * monthUILength + 20.4}px`,
           width: monthUILength * months,
           position: "relative",
           height: (maxRow + 1) * (conflictHeight + conflictSpacing),

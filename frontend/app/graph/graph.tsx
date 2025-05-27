@@ -14,7 +14,7 @@ const xAxisOffset = 55;
 
 export default function Graph({dataset, labels}: GraphProps) {
   return (
-    <Box sx={{display: "inline-block", zIndex: 2}}>
+    <Box sx={{display: "inline-block", bgcolor: "transparent", zIndex: 2, position: "relative"}}>
       <LineChart
         slotProps={{
           legend: {
@@ -27,7 +27,7 @@ export default function Graph({dataset, labels}: GraphProps) {
             }
           }
         }}
-        height={400}
+        height={540}
         width={dataset.length * monthUILength + xAxisOffset}
         grid={{vertical: true, horizontal: true}}
         xAxis={[
