@@ -2,16 +2,20 @@ import {
   AppBar, Box, Button, Chip,
   FormControl,
   InputLabel,
+  Menu,
   MenuItem,
   OutlinedInput,
   Select,
   type SelectChangeEvent,
   Toolbar
 } from "@mui/material";
+import yaml from "yaml";
+import {js2xml} from "xml-js";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import type {CommoditiesInMonth, Conflict, ConflictQuery} from "~/const/models";
 import {drawerWidth, topBarHeight} from "~/const/layout-consts";
 import {energyKeyLabels, foodKeyLabels, metalKeyLabels} from "~/const/labels";
+import {useState, type MouseEvent} from "react";
 
 type SelectorProps = {
   updateQuery: (key: keyof ConflictQuery, value: ConflictQuery[keyof ConflictQuery]) => void;
@@ -20,17 +24,35 @@ type SelectorProps = {
   commodities: CommoditiesInMonth[];
 };
 
-const handleDownload = (conflicts: Conflict[], commodities: CommoditiesInMonth[]) => {
-  const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    JSON.stringify({
-      conflicts: conflicts,
-      commodities: commodities,
-      labels: [...foodKeyLabels, ...energyKeyLabels, ...metalKeyLabels]
-    }, null, 2)
-  )}`;
+const handleDownload = (
+  conflicts: Conflict[],
+  commodities: CommoditiesInMonth[],
+  format: "json" | "yaml" | "xml"
+) => {
+  const content = {
+    conflicts,
+    commodities,
+    labels: [...foodKeyLabels, ...energyKeyLabels, ...metalKeyLabels],
+  };
+
+  let string = "";
+  let mimeType = "";
+
+  if (format === "yaml") {
+    string = encodeURIComponent(yaml.stringify(content));
+    mimeType = "text/yaml";
+  } else if (format === "json") {
+    string = encodeURIComponent(JSON.stringify(content, null, 2));
+    mimeType = "application/json";
+  } else if (format === "xml") {
+    const xmlData = js2xml({export: content}, {compact: true, spaces: 2});
+    string = encodeURIComponent(xmlData);
+    mimeType = "application/xml";
+  }
+
   const link = document.createElement("a");
-  link.href = jsonString;
-  link.download = "data.json";
+  link.href = `data:${mimeType};charset=utf-8,${string}`;
+  link.download = `data.${format}`;
   link.click();
 };
 
@@ -45,6 +67,14 @@ export default function Selector({updateQuery, query, conflicts, commodities}: S
       "regions",
       typeof value === 'string' ? value.split(',') : value,
     );
+  };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -99,9 +129,50 @@ export default function Selector({updateQuery, query, conflicts, commodities}: S
             }
           </Select>
         </FormControl>
-        <Button onClick={() => handleDownload(conflicts, commodities)} variant="contained" color="primary">
-          Export data
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClick}
+            sx={{width: "200px"}}
+          >
+            Export data
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+          >
+            <MenuItem
+              sx={{width: "200px", justifyContent: "center"}}
+              onClick={() => {
+                handleDownload(conflicts, commodities, "json");
+                handleClose();
+              }}
+            >
+              json
+            </MenuItem>
+            <MenuItem
+              sx={{width: "200px", justifyContent: "center"}}
+              onClick={() => {
+                handleDownload(conflicts, commodities, "yaml");
+                handleClose();
+              }}
+            >
+              yaml
+            </MenuItem>
+            <MenuItem
+              sx={{width: "200px", justifyContent: "center"}}
+              onClick={() => {
+                handleDownload(conflicts, commodities, "xml");
+                handleClose();
+              }}
+            >
+              xml
+            </MenuItem>
+          </Menu>
+        </div>
+
       </Toolbar>
     </AppBar>
   )
